@@ -32,7 +32,7 @@ const LoginForm = () => {
       });
       setTimeout(() => {
         location.replace("/");
-        navigate("/");
+        // navigate("/");
       }, 2000);
     } catch (error) {
       if (axios.isAxiosError(error)) {
