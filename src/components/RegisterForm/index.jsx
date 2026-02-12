@@ -43,7 +43,7 @@ const RegisterForm = () => {
             background: "#333",
             color: "#fff",
           },
-          duration: 2000,
+          duration: 4000,
         });
       } else {
         toast.error("Unexpected error occurred");
@@ -100,7 +100,7 @@ const RegisterForm = () => {
         <button
           disabled={isLoading}
           type="submit"
-          className="bg-indigo-600 text-white text-lg py-1.5 rounded hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-indigo-400 duration-300 flex items-center justify-center gap-4 cursor-pointer"
+          className="bg-indigo-600 text-white text-lg py-1.5 rounded hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-indigo-400 duration-300 flex items-center justify-center gap-4 cursor-pointer active:scale-95"
         >
           Register
           {isLoading && <CgSpinner className="animate-spin" />}
