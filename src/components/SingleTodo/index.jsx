@@ -1,4 +1,4 @@
-const SingleTodo = () => {
+const SingleTodo = ({title}) => {
   return (
     <div
       className="
@@ -24,7 +24,7 @@ const SingleTodo = () => {
 
       {/* Content */}
       <p className="text-lg relative z-10 transition-colors">
-        1- First ToDo
+        {title}
       </p>
 
       <div className="flex gap-3 relative z-10">

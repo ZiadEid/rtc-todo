@@ -25,7 +25,6 @@ const Store = ({ children }) => {
 
   // Store Login Data In Localstorage
   useEffect(() => {
-    console.log(loginData)
     if (loginData) {
       localStorage.setItem("auth", JSON.stringify(loginData));
     } else {

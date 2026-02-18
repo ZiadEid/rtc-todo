@@ -9,21 +9,20 @@ const Home = () => {
   const [todos, setTodos] = useState([]);
 
   // Vars
-  const endPoint = "/users/me";
+  const endPoint = "/users/me?populate=todos";
 
   // Hooks
-  const {base_url, token, userData} = useContext(storeContext)
+  const { base_url, token, userData } = useContext(storeContext);
 
   // Functions
   const fetechData = async () => {
     try {
       const { data } = await axios.get(base_url + endPoint, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      setTodos(data.data);
-
+      setTodos(data.todos);
     } catch (error) {
       console.log(error);
     }
@@ -40,7 +39,8 @@ const Home = () => {
       </h1>
       <div className="w-140 max-w-full flex flex-col gap-3">
         {todos?.length > 0 &&
-          todos.map((todo, index) => <SingleTodo key={todo.documentId} />)}
+          todos.map(todo => <SingleTodo key={todo.id} title={todo.title} />)
+        }
       </div>
     </section>
   );

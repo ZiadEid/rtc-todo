@@ -16,7 +16,7 @@ const RegisterForm = () => {
   const { base_url } = useContext(storeContext);
 
   // Vars
-  const endPoint = "/api/auth/local/register";
+  const endPoint = "/auth/local/register";
 
   const onSubmit = async (values) => {
     setIsLoading(true);
