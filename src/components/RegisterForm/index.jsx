@@ -4,7 +4,8 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { schema } from "./Scehma";
 import { CgSpinner } from "react-icons/cg";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { storeContext } from "../../context/Store";
 
 const RegisterForm = () => {
   // State
@@ -12,16 +13,16 @@ const RegisterForm = () => {
 
   // Hooks
   const navigate = useNavigate();
+  const { base_url } = useContext(storeContext);
 
   // Vars
-  const base_url = "http://localhost:1337";
-  const pathName = "/api/auth/local/register";
+  const endPoint = "/api/auth/local/register";
 
   const onSubmit = async (values) => {
     setIsLoading(true);
     try {
       // fullfiled - success
-      const res = await axios.post(`${base_url}${pathName}`, values);
+      await axios.post(`${base_url}${endPoint}`, values);
 
       toast.success("Register Successfuly!", {
         style: {

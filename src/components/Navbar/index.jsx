@@ -1,29 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router";
+import { storeContext } from "../../context/Store";
 
 const Navbar = () => {
-  // State
-  const [user, setUser] = useState(() =>
-    localStorage.getItem("userData")
-      ? JSON.parse(localStorage.getItem("userData"))
-      : null,
-  );
-
   // hooks
+  const { userData, logout } = useContext(storeContext);
   const navigate = useNavigate();
 
-  const logoutHandler = () => {
-    localStorage.removeItem("userData");
-    localStorage.removeItem("token");
-    setUser(null);
-    location.replace("/login");
-    // navigate('/login')
-  };
   return (
     <nav
-      className={`w-130 max-w-full mx-auto p-3 mb-15 rounded bg-linear-to-r from-indigo-600 to-indigo-500 text-white flex items-center justify-${user ? "between" : "end"}`}
+      className={`w-130 max-w-full mx-auto p-3 mb-15 rounded bg-linear-to-r from-indigo-600 to-indigo-500 text-white flex items-center ${userData ? "justify-between" : "justify-end"}`}
     >
-      {user && (
+      {userData && (
         <li>
           <NavLink to={"/"} className="font-semibold">
             Home
@@ -31,10 +19,13 @@ const Navbar = () => {
         </li>
       )}
       <ul className="flex items-center gap-2">
-        {user ? (
+        {userData ? (
           <li>
             <button
-              onClick={logoutHandler}
+              onClick={() => {
+                logout();
+                navigate("/login");
+              }}
               className="bg-white text-indigo-500 px-3 py-2 font-semibold rounded-lg cursor-pointer duration-200 active:scale-95"
             >
               Logout

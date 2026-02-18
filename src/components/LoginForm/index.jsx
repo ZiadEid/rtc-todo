@@ -3,25 +3,27 @@ import { ErrorMessage, Field, Form, Formik } from "formik";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { schema } from "./Schema";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { CgSpinner } from "react-icons/cg";
+import { storeContext } from "../../context/Store";
 const LoginForm = () => {
   // State
   const [isLoading, setIsLoading] = useState(false);
 
   // Hooks
   const navigate = useNavigate();
+  const { base_url, login } = useContext(storeContext);
 
   // Vars
-  const base_url = "http://localhost:1337";
-  const pathName = "/api/auth/local";
+  const endPoint = "/auth/local";
 
   const onSubmit = async (values) => {
     setIsLoading(true);
     try {
-      const res = await axios.post(base_url + pathName, values);
-      localStorage.setItem("token", JSON.stringify(res.data.jwt));
-      localStorage.setItem("userData", JSON.stringify(res.data.user));
+      const res = await axios.post(base_url + endPoint, values);
+
+      login(res.data);
+
       toast.success("Login Successfuly!", {
         style: {
           borderRadius: "10px",
@@ -30,10 +32,11 @@ const LoginForm = () => {
         },
         duration: 1500,
       });
+
       setTimeout(() => {
-        location.replace("/");
-        // navigate("/");
+        navigate("/");
       }, 2000);
+      
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data?.error?.message, {

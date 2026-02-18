@@ -4,11 +4,12 @@ import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import MainLayout from "../layouts/MainLayout";
 import ProtectedRoutes from "./ProtactedRoutes";
+import { useContext } from "react";
+import { storeContext } from "../context/Store";
 
 const Router = () => {
   // Vars
-  const token = localStorage.getItem("token");
-  const userData = JSON.parse(localStorage.getItem("userData"))
+  const {token} = useContext(storeContext)
   
 
   return (
@@ -18,7 +19,7 @@ const Router = () => {
           <Route
             index
             element={
-              <ProtectedRoutes isAllowed={token} redirect="/login" userData={userData}>
+              <ProtectedRoutes isAllowed={token} redirect="/login">
                 <Home />
               </ProtectedRoutes>
             }
@@ -27,7 +28,7 @@ const Router = () => {
           <Route
             path="login"
             element={
-              <ProtectedRoutes isAllowed={!token} redirect="/" userData={userData}>
+              <ProtectedRoutes isAllowed={!token} redirect="/">
                 <Login />
               </ProtectedRoutes>
             }
@@ -35,7 +36,7 @@ const Router = () => {
           <Route
             path="register"
             element={
-              <ProtectedRoutes isAllowed={!token} redirect="/" userData={userData}>
+              <ProtectedRoutes isAllowed={!token} redirect="/">
                 <Register />
               </ProtectedRoutes>
             }
