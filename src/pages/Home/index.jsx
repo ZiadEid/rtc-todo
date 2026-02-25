@@ -1,47 +1,67 @@
-import { useLocation } from "react-router";
 import SingleTodo from "../../components/SingleTodo";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { storeContext } from "../../context/Store";
+import { useQuery } from "@tanstack/react-query";
+import PageLoader from "../../components/PageLoader";
+import NoContent from "../../components/NoContent";
+import ErrorPage from "../../layouts/Error";
+import { useAuthorizedQuery } from "../../hooks/useAuthorizedQuery";
+import FormModal from "../../components/FormModal";
 
 const Home = () => {
   // State
-  const [todos, setTodos] = useState([]);
-
+  const [todo, setTodo] = useState(null);
   // Vars
   const endPoint = "/users/me?populate=todos";
+  const queryKey = ["todos"];
 
   // Hooks
-  const { base_url, token, userData } = useContext(storeContext);
+  const { userData } = useContext(storeContext);
+  const { query, deDuplicates } = useAuthorizedQuery(endPoint, queryKey);
+
+  const { data, isLoading, isError } = query;
+
+  const todos = deDuplicates(data?.todos);
 
   // Functions
-  const fetechData = async () => {
-    try {
-      const { data } = await axios.get(base_url + endPoint, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setTodos(data.todos);
-    } catch (error) {
-      console.log(error);
-    }
+  const ophenFormModal = (todo) => {
+    setTodo(todo);
   };
 
-  useEffect(() => {
-    fetechData();
-  }, []);
+  const closeFormModal = () => {
+    setTodo(null);
+  };
+
+  // if (isError) {
+  //   return <ErrorPage />
+  // }
 
   return (
-    <section className="flex flex-col items-center gap-15">
+    <section className="grow flex flex-col items-center gap-15">
       <h1 className="text-3xl font-bold">
         Welcome, {userData ? userData.username : "Guest"}!
       </h1>
-      <div className="w-140 max-w-full flex flex-col gap-3">
-        {todos?.length > 0 &&
-          todos.map(todo => <SingleTodo key={todo.id} title={todo.title} />)
-        }
-      </div>
+      {isLoading ? (
+        <PageLoader />
+      ) : (
+        <div className="grow w-full flex flex-col gap-3">
+          {isError ? (
+            <ErrorPage />
+          ) : todos.length ? (
+            todos.map((todo) => (
+              <SingleTodo
+                key={todo.documentId}
+                todo={todo}
+                ophenFormModal={ophenFormModal}
+              />
+            ))
+          ) : (
+            <NoContent />
+          )}
+        </div>
+      )}
+      {todo && <FormModal todo={todo} closeFormModal={closeFormModal} />}
     </section>
   );
 };

@@ -1,4 +1,4 @@
-const SingleTodo = ({title}) => {
+const SingleTodo = ({ todo, ophenFormModal }) => {
   return (
     <div
       className="
@@ -23,12 +23,11 @@ const SingleTodo = ({title}) => {
       ></span>
 
       {/* Content */}
-      <p className="text-lg relative z-10 transition-colors">
-        {title}
-      </p>
+      <p className="text-lg relative z-10 transition-colors">{todo.title}</p>
 
       <div className="flex gap-3 relative z-10">
         <button
+          onClick={()=> ophenFormModal(todo)}
           className="
             bg-indigo-500 text-white px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-indigo-600 active:scale-95"
         >

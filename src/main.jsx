@@ -3,10 +3,15 @@ import "./index.css";
 import App from "./App.jsx";
 import Store from "./context/Store.jsx";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 createRoot(document.getElementById("root")).render(
-  <Store>
-    <App />
-  </Store>,
+  <QueryClientProvider client={queryClient}>
+    <Store>
+      <App />
+    </Store>
+  </QueryClientProvider>,
 );
 
 // npm i react-router tailwindcss @tailwindcss/vite -D daisyui@latest

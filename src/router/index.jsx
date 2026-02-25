@@ -6,11 +6,11 @@ import MainLayout from "../layouts/MainLayout";
 import ProtectedRoutes from "./ProtactedRoutes";
 import { useContext } from "react";
 import { storeContext } from "../context/Store";
+import Profile from "../pages/Profile";
 
 const Router = () => {
   // Vars
-  const {token} = useContext(storeContext)
-  
+  const { token } = useContext(storeContext);
 
   return (
     <BrowserRouter>
@@ -24,7 +24,14 @@ const Router = () => {
               </ProtectedRoutes>
             }
           />
-
+          <Route
+            path="profile"
+            element={
+              <ProtectedRoutes isAllowed={token} redirect="/login">
+                <Profile />
+              </ProtectedRoutes>
+            }
+          />
           <Route
             path="login"
             element={
