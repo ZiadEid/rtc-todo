@@ -17,13 +17,13 @@ const Home = () => {
 
   // Hooks
   const { userData } = useContext(storeContext);
-  const endPoint = `/todos?filters[user][id]=${userData?.id}`;
+  const endPoint = `/users/me?populate=todos`;
   const queryKey = ["todos"];
   const { query, deDuplicates } = useAuthorizedQuery(endPoint, queryKey);
 
   // Vars
   const { data, isLoading, isError, refetch } = query;
-  const todos = deDuplicates(data?.data);
+  const todos = deDuplicates(data?.todos);
 
   // Functions
   const openFormModal = (todo) => {
