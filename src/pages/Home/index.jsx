@@ -15,17 +15,15 @@ const Home = () => {
   const [todoToEdit, setTodoToEdit] = useState(null);
   const [todoToDelete, setTodoToDelete] = useState(null);
 
-  // Vars
-  const endPoint = "/users/me?populate=todos";
-  const queryKey = ["todos"];
-
   // Hooks
   const { userData } = useContext(storeContext);
+  const endPoint = `/todos?filters[user][id]=${userData?.id}`;
+  const queryKey = ["todos"];
   const { query, deDuplicates } = useAuthorizedQuery(endPoint, queryKey);
 
+  // Vars
   const { data, isLoading, isError, refetch } = query;
-
-  const todos = deDuplicates(data?.todos);
+  const todos = deDuplicates(data?.data);
 
   // Functions
   const openFormModal = (todo) => {
@@ -53,19 +51,23 @@ const Home = () => {
         <h1 className="text-3xl font-bold">
           Welcome, {userData ? userData.username : "Guest"}!
         </h1>
-        <button
-          onClick={() => {
-            setTimeout(() => {
-              setModalType("add");
-            }, 200);
-          }}
-          className="font-medium flex items-center justify-center gap-3 shadow-2xl cursor-pointer text-lg w-32 h-10 rounded-lg bg-indigo-500 text-white relative overflow-hidden group z-10 hover:text-white duration-1000 active:scale-85"
-        >
-          <span className="absolute bg-indigo-600 w-40 h-36 rounded-full group-hover:scale-100 scale-0 -z-10 -left-2 -top-10 group-hover:duration-500 duration-700 origin-center transform transition-all"></span>
-          <span className="absolute bg-indigo-700 w-40 h-36 -left-2 -top-10 rounded-full group-hover:scale-100 scale-0 -z-10 group-hover:duration-700 duration-500 origin-center transform transition-all"></span>
-          Add Task
-          <FaPlus />
-        </button>
+        {isLoading || isError ? (
+          ""
+        ) : (
+          <button
+            onClick={() => {
+              setTimeout(() => {
+                setModalType("add");
+              }, 200);
+            }}
+            className="font-medium flex items-center justify-center gap-3 shadow-2xl cursor-pointer text-lg w-32 h-10 rounded-lg bg-indigo-500 text-white relative overflow-hidden group z-10 hover:text-white duration-1000 active:scale-85"
+          >
+            <span className="absolute bg-indigo-600 w-40 h-36 rounded-full group-hover:scale-100 scale-0 -z-10 -left-2 -top-10 group-hover:duration-500 duration-700 origin-center transform transition-all"></span>
+            <span className="absolute bg-indigo-700 w-40 h-36 -left-2 -top-10 rounded-full group-hover:scale-100 scale-0 -z-10 group-hover:duration-700 duration-500 origin-center transform transition-all"></span>
+            Add Task
+            <FaPlus />
+          </button>
+        )}
       </div>
       {isLoading ? (
         <PageLoader />
