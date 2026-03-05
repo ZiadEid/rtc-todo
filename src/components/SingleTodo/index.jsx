@@ -1,4 +1,10 @@
-const SingleTodo = ({ todo, ophenFormModal }) => {
+const SingleTodo = ({
+  todo,
+  index,
+  openFormModal,
+  openConfirmModal,
+  setModalType,
+}) => {
   return (
     <div
       className="
@@ -23,11 +29,16 @@ const SingleTodo = ({ todo, ophenFormModal }) => {
       ></span>
 
       {/* Content */}
-      <p className="text-lg relative z-10 transition-colors">{todo.title}</p>
+      <p className="text-lg relative z-10 transition-colors uppercase font-semibold lin truncate max-w-[15ch]">
+        {index + 1} - {todo.title}
+      </p>
 
       <div className="flex gap-3 relative z-10">
         <button
-          onClick={()=> ophenFormModal(todo)}
+          onClick={() => {
+            openFormModal(todo);
+            setModalType("update")
+          }}
           className="
             bg-indigo-500 text-white px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-indigo-600 active:scale-95"
         >
@@ -35,6 +46,7 @@ const SingleTodo = ({ todo, ophenFormModal }) => {
         </button>
 
         <button
+          onClick={() => openConfirmModal(todo)}
           className="
             bg-red-600 text-white px-3 py-2 rounded-lg cursor-pointer transition-all duration-200 hover:bg-red-700 active:scale-95"
         >

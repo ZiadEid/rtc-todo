@@ -1,17 +1,20 @@
 import SingleTodo from "../../components/SingleTodo";
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { storeContext } from "../../context/Store";
-import { useQuery } from "@tanstack/react-query";
 import PageLoader from "../../components/PageLoader";
 import NoContent from "../../components/NoContent";
 import ErrorPage from "../../layouts/Error";
 import { useAuthorizedQuery } from "../../hooks/useAuthorizedQuery";
-import FormModal from "../../components/FormModal";
+import FormModal from "../../components/Modals/FormModal";
+import ConfirmModal from "../../components/Modals/ConfirmModal";
+import { FaPlus } from "react-icons/fa6";
 
 const Home = () => {
   // State
-  const [todo, setTodo] = useState(null);
+  const [modalType, setModalType] = useState(null);
+  const [todoToEdit, setTodoToEdit] = useState(null);
+  const [todoToDelete, setTodoToDelete] = useState(null);
+
   // Vars
   const endPoint = "/users/me?populate=todos";
   const queryKey = ["todos"];
@@ -20,17 +23,24 @@ const Home = () => {
   const { userData } = useContext(storeContext);
   const { query, deDuplicates } = useAuthorizedQuery(endPoint, queryKey);
 
-  const { data, isLoading, isError } = query;
+  const { data, isLoading, isError, refetch } = query;
 
   const todos = deDuplicates(data?.todos);
 
   // Functions
-  const ophenFormModal = (todo) => {
-    setTodo(todo);
+  const openFormModal = (todo) => {
+    setTodoToEdit(todo);
+  };
+  const closeFormModal = () => {
+    setTodoToEdit(null);
+    setModalType(null);
   };
 
-  const closeFormModal = () => {
-    setTodo(null);
+  const openConfirmModal = (todo) => {
+    setTodoToDelete(todo);
+  };
+  const closeConfirmModal = () => {
+    setTodoToDelete(null);
   };
 
   // if (isError) {
@@ -38,10 +48,25 @@ const Home = () => {
   // }
 
   return (
-    <section className="grow flex flex-col items-center gap-15">
-      <h1 className="text-3xl font-bold">
-        Welcome, {userData ? userData.username : "Guest"}!
-      </h1>
+    <section className="grow flex flex-col items-center gap-3">
+      <div className="w-full flex flex-col items-center gap-15">
+        <h1 className="text-3xl font-bold">
+          Welcome, {userData ? userData.username : "Guest"}!
+        </h1>
+        <button
+          onClick={() => {
+            setTimeout(() => {
+              setModalType("add");
+            }, 200);
+          }}
+          className="font-medium flex items-center justify-center gap-3 shadow-2xl cursor-pointer text-lg w-32 h-10 rounded-lg bg-indigo-500 text-white relative overflow-hidden group z-10 hover:text-white duration-1000 active:scale-85"
+        >
+          <span className="absolute bg-indigo-600 w-40 h-36 rounded-full group-hover:scale-100 scale-0 -z-10 -left-2 -top-10 group-hover:duration-500 duration-700 origin-center transform transition-all"></span>
+          <span className="absolute bg-indigo-700 w-40 h-36 -left-2 -top-10 rounded-full group-hover:scale-100 scale-0 -z-10 group-hover:duration-700 duration-500 origin-center transform transition-all"></span>
+          Add Task
+          <FaPlus />
+        </button>
+      </div>
       {isLoading ? (
         <PageLoader />
       ) : (
@@ -49,11 +74,14 @@ const Home = () => {
           {isError ? (
             <ErrorPage />
           ) : todos.length ? (
-            todos.map((todo) => (
+            todos.map((todo, index) => (
               <SingleTodo
                 key={todo.documentId}
                 todo={todo}
-                ophenFormModal={ophenFormModal}
+                index={index}
+                openFormModal={openFormModal}
+                openConfirmModal={openConfirmModal}
+                setModalType={setModalType}
               />
             ))
           ) : (
@@ -61,7 +89,21 @@ const Home = () => {
           )}
         </div>
       )}
-      {todo && <FormModal todo={todo} closeFormModal={closeFormModal} />}
+      {modalType && (
+        <FormModal
+          modalType={modalType}
+          todo={todoToEdit}
+          closeFormModal={closeFormModal}
+          refetch={refetch}
+        />
+      )}
+      {todoToDelete && (
+        <ConfirmModal
+          documentId={todoToDelete?.documentId}
+          closeConfirmModal={closeConfirmModal}
+          refetch={refetch}
+        />
+      )}
     </section>
   );
 };

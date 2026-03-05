@@ -1,11 +1,12 @@
-import { useContext } from "react";
-import { NavLink, useNavigate } from "react-router";
+import { useContext, useEffect } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import { storeContext } from "../../context/Store";
 
 const Navbar = () => {
   // hooks
   const { userData, logout } = useContext(storeContext);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   return (
     <nav
@@ -38,12 +39,25 @@ const Navbar = () => {
           </div>
         ) : (
           <>
-            <li>
-              <NavLink to={"/login"}>Login</NavLink>
-            </li>
-            <li>
-              <NavLink to={"register"}>Register</NavLink>
-            </li>
+            {pathname.includes("login") ? (
+              <li>
+                <NavLink
+                  to={"register"}
+                  className="bg-white text-indigo-500 px-3 py-2 font-semibold rounded-lg cursor-pointer duration-200 active:scale-95"
+                >
+                  Register
+                </NavLink>
+              </li>
+            ) : (
+              <li>
+                <NavLink
+                  to={"/login"}
+                  className="bg-white text-indigo-500 px-3 py-2 font-semibold rounded-lg cursor-pointer duration-200 active:scale-95"
+                >
+                  Login
+                </NavLink>
+              </li>
+            )}
           </>
         )}
       </ul>
