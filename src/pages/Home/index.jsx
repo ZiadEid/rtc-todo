@@ -8,22 +8,31 @@ import { useAuthorizedQuery } from "../../hooks/useAuthorizedQuery";
 import FormModal from "../../components/Modals/FormModal";
 import ConfirmModal from "../../components/Modals/ConfirmModal";
 import { FaPlus } from "react-icons/fa6";
+import PagenationBar from "../../components/PagenationBar";
 
 const Home = () => {
   // State
   const [modalType, setModalType] = useState(null);
   const [todoToEdit, setTodoToEdit] = useState(null);
   const [todoToDelete, setTodoToDelete] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   // Hooks
   const { userData } = useContext(storeContext);
-  const endPoint = `/users/me?populate=todos`;
+  const endPoint = `/todos?filters[user][id]=${userData?.id}&pagination[page]=${page}&pagination[pageSize]=${pageSize}`;
   const queryKey = ["todos"];
-  const { query, deDuplicates } = useAuthorizedQuery(endPoint, queryKey);
+  const { query } = useAuthorizedQuery(endPoint, queryKey);
 
   // Vars
   const { data, isLoading, isError, refetch } = query;
-  const todos = deDuplicates(data?.todos);
+
+  useEffect(() => {
+    if (data) {
+      setTotalPages(data.meta.pagination.pageCount);
+    }
+  }, [data]);
 
   // Functions
   const openFormModal = (todo) => {
@@ -40,14 +49,28 @@ const Home = () => {
   const closeConfirmModal = () => {
     setTodoToDelete(null);
   };
+  const selectPageSize = (e) => {
+    setPageSize(e.target.value);
+  };
 
-  // if (isError) {
-  //   return <ErrorPage />
-  // }
+  useEffect(() => {
+    refetch();
+  }, [page, pageSize]);
 
   return (
-    <section className="grow flex flex-col items-center gap-3">
-      <div className="w-full flex flex-col items-center gap-15">
+    <section className="grow flex flex-col items-center gap-7 pb-5">
+      <div className="w-full flex flex-col items-center gap-15 relative ">
+        <select
+          onChange={selectPageSize}
+          name=""
+          id=""
+          className="absolute bottom-2 left-[calc(100%+30px)]"
+          defaultValue={pageSize}
+        >
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="25">25</option>
+        </select>
         <h1 className="text-3xl font-bold">
           Welcome, {userData ? userData.username : "Guest"}!
         </h1>
@@ -72,11 +95,13 @@ const Home = () => {
       {isLoading ? (
         <PageLoader />
       ) : (
-        <div className="grow w-full flex flex-col gap-3">
+        <div
+          className={`${!data?.data?.length > 0 && "grow"} w-full flex flex-col gap-3`}
+        >
           {isError ? (
             <ErrorPage />
-          ) : todos.length ? (
-            todos.map((todo, index) => (
+          ) : data?.data?.length ? (
+            data?.data?.map((todo, index) => (
               <SingleTodo
                 key={todo.documentId}
                 todo={todo}
@@ -105,6 +130,9 @@ const Home = () => {
           closeConfirmModal={closeConfirmModal}
           refetch={refetch}
         />
+      )}
+      {!isLoading && !isError && data?.data?.length > 0 && (
+        <PagenationBar page={page} totalPages={totalPages} setPage={setPage} />
       )}
     </section>
   );

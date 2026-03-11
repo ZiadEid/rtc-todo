@@ -1,7 +1,7 @@
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { schema } from "./Schema";
 import axios from "axios";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { storeContext } from "../../../context/Store";
 import toast from "react-hot-toast";
 import { CgSpinner } from "react-icons/cg";
@@ -15,6 +15,24 @@ const FormModal = ({ modalType, todo, closeFormModal, refetch }) => {
 
   // Vars
   const endPoint = "/todos";
+
+  const genrateTodos = async () => {
+    for (let i = 0; i < 200; i++) {
+      const data = {
+        data: {
+          title: `task ${i + 1}`,
+          description: "new description",
+          user: [userData.id],
+        },
+      };
+
+      await axios.post(`${base_url}${endPoint}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    }
+  };
 
   const onSubmitHandler = async (values) => {
     setIsLoading(true);

@@ -18,7 +18,7 @@ export const useAuthorizedQuery = (endPoint, queryKey) => {
       });
       return data;
     },
-    staleTime: 1000 * 60 * 60 , // 1 hour
+    // staleTime: 1000 * 60 * 60 ,
     // refetchInterval: 1000 * 5
   });
 
